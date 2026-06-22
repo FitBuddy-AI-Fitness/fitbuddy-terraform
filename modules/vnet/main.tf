@@ -1,6 +1,6 @@
 ﻿# Hub VNet
 resource "azurerm_virtual_network" "hub" {
-  name                = "vnet-hub-001"
+  name                = "vnet-hub-002"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = [var.hub_vnet_cidr]
@@ -23,7 +23,7 @@ resource "azurerm_subnet" "bastion" {
 
 # Spoke VNet
 resource "azurerm_virtual_network" "spoke" {
-  name                = "vnet-spoke-production"
+  name                = "vnet-spoke-prod-002"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = [var.spoke_vnet_cidr]
@@ -65,7 +65,7 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 
 # Azure Bastion
 resource "azurerm_public_ip" "bastion_pip" {
-  name                = "pip-bastion"
+  name                = "pip-bastion-002"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -178,3 +178,4 @@ resource "azurerm_web_application_firewall_policy" "waf" {
     }
   }
 }
+

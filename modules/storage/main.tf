@@ -9,11 +9,7 @@
   public_network_access_enabled = true
 }
 
-resource "azurerm_storage_container" "blob" {
-  name                  = "media"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
+
 
 resource "azurerm_private_endpoint" "pe_blob" {
   name                = "pe-blob"
@@ -89,3 +85,4 @@ resource "azurerm_private_dns_zone_virtual_network_link" "acr_vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.acr.name
   virtual_network_id    = var.vnet_id
 }
+

@@ -16,10 +16,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   tags                = var.tags
 
   default_node_pool {
-    name           = "default"
-    node_count     = var.node_count
-    vm_size        = "Standard_DS2_v2"
-    vnet_subnet_id = var.vnet_subnet_id
+    name                = "default"
+    vm_size             = "Standard_DS2_v2"
+    vnet_subnet_id      = var.vnet_subnet_id
+    enable_auto_scaling = true
+    min_count           = 1
+    max_count           = 3
   }
 
   identity {
@@ -54,3 +56,4 @@ resource "azurerm_federated_identity_credential" "fic_dev" {
   parent_id           = azurerm_user_assigned_identity.aks_wi.id
   subject             = "system:serviceaccount:dev:fitbuddy-sa"
 }
+

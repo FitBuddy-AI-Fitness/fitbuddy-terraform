@@ -9,10 +9,14 @@
   capacity {
     total_throughput_limit = 4000
   }
-
   geo_location {
     location          = var.location
     failover_priority = 0
+  }
+
+  geo_location {
+    location          = "Canada Central"
+    failover_priority = 1
   }
 
   consistency_policy {
@@ -61,3 +65,4 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.cosmos.name
   virtual_network_id    = var.vnet_id
 }
+
