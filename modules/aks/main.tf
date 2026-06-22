@@ -1,4 +1,4 @@
-﻿# User Assigned Identity for Workload Identity
+# User Assigned Identity for Workload Identity
 resource "azurerm_user_assigned_identity" "aks_wi" {
   name                = "uami-fitbuddy-workload"
   resource_group_name = var.resource_group_name
@@ -21,6 +21,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
     enable_auto_scaling = true
+    node_count          = 1
     min_count           = 1
     max_count           = 3
   }
