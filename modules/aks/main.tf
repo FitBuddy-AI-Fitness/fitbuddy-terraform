@@ -40,13 +40,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# Grant AKS SystemAssigned Identity permission to pull from ACR
-resource "azurerm_role_assignment" "aks_acr_pull" {
-  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-  role_definition_name             = "AcrPull"
-  scope                            = var.acr_id
-  skip_service_principal_aad_check = true
-}
+# Removed ACR Pull Role Assignment due to ABAC Condition limitations.
+# The user will attach ACR manually via Azure CLI later if needed.
 
 # Federated Identity Credential for Production Namespace
 resource "azurerm_federated_identity_credential" "fic_prod" {

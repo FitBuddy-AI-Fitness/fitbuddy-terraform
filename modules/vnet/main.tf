@@ -1,4 +1,4 @@
-﻿# Hub VNet
+# Hub VNet
 resource "azurerm_virtual_network" "hub" {
   name                = "vnet-hub-belgium"
   location            = var.location
@@ -89,9 +89,9 @@ resource "azurerm_bastion_host" "bastion" {
   }
 }
 
-# Application Gateway WAF
-resource "azurerm_public_ip" "appgw_pip" {
-  name                = "pip-appgw"
+# Public IP for App Gateway
+resource "azurerm_public_ip" "appgw" {
+  name                = "pip-appgw-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -99,8 +99,9 @@ resource "azurerm_public_ip" "appgw_pip" {
   tags                = var.tags
 }
 
+# Application Gateway WAF v2
 resource "azurerm_application_gateway" "appgw" {
-  name                = "appgw-waf"
+  name                = "appgw-belgium"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
@@ -124,8 +125,8 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_ip_configuration {
-    name                 = "frontend-ip-config"
-    public_ip_address_id = azurerm_public_ip.appgw_pip.id
+    name                 = "appgw-pip-config"
+    public_ip_address_id = azurerm_public_ip.appgw.id
   }
 
   backend_address_pool {

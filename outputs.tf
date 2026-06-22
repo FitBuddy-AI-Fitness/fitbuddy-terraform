@@ -1,4 +1,4 @@
-﻿output "aks_cluster_name" {
+output "aks_cluster_name" {
   description = "The name of the AKS Cluster"
   value       = module.aks.cluster_name
 }
@@ -6,6 +6,7 @@
 output "aks_cluster_endpoint" {
   description = "The Kubernetes API server endpoint"
   value       = module.aks.cluster_endpoint
+  sensitive   = true
 }
 
 output "cosmosdb_connection_string" {
