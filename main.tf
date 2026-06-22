@@ -1,4 +1,4 @@
-﻿data "azurerm_resource_group" "rg" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
@@ -24,6 +24,7 @@ module "aks" {
   location            = var.location
   vnet_subnet_id      = module.vnet.aks_subnet_id
   node_count          = var.aks_node_count
+  acr_id              = module.storage.acr_id
   tags                = local.common_tags
 }
 

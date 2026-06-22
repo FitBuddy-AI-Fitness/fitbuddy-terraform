@@ -6,25 +6,33 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
   tags                = var.tags
 }
 
-# AKS Cluster (Standard Tier)
+# AKS Cluster
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-04"
+  name                = "aks-cluster-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix          = "fitbuddy-aks-04"
+  dns_prefix          = "fitbuddy-aks-belgium"
   sku_tier            = "Free"
   tags                = var.tags
 
   default_node_pool {
     name                = "default"
-    vm_size             = "Standard_B2s"
+    vm_size             = "Standard_D2ads_v6"
     vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
+    zones               = ["2", "3"]
+    enable_auto_scaling = true
     node_count          = 1
+    min_count           = 1
+    max_count           = 2
   }
 
   identity {
     type = "SystemAssigned"
+  }
+
+  oms_agent {
+    log_analytics_workspace_id = null
   }
 
   oidc_issuer_enabled       = true
@@ -34,6 +42,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
   }
+}
+
+# Grant AKS SystemAssigned Identity permission to pull from ACR
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = var.acr_id
+  skip_service_principal_aad_check = true
 }
 
 # Federated Identity Credential for Production Namespace
