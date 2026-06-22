@@ -90,7 +90,7 @@ resource "azurerm_bastion_host" "bastion" {
 }
 
 # Public IP for App Gateway
-resource "azurerm_public_ip" "appgw" {
+resource "azurerm_public_ip" "appgw_pip" {
   name                = "pip-appgw-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -126,7 +126,7 @@ resource "azurerm_application_gateway" "appgw" {
 
   frontend_ip_configuration {
     name                 = "appgw-pip-config"
-    public_ip_address_id = azurerm_public_ip.appgw.id
+    public_ip_address_id = azurerm_public_ip.appgw_pip.id
   }
 
   backend_address_pool {
