@@ -8,7 +8,7 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
 
 # AKS Cluster (Standard Tier)
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-01"
+  name                = "aks-cluster-02"
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = "fitbuddy-aks"
@@ -19,6 +19,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name                = "default"
     vm_size             = "Standard_DS2_v2"
     vnet_subnet_id      = var.vnet_subnet_id
+    type                = "VirtualMachineScaleSets"
     enable_auto_scaling = true
     min_count           = 1
     max_count           = 3
@@ -56,4 +57,3 @@ resource "azurerm_federated_identity_credential" "fic_dev" {
   parent_id           = azurerm_user_assigned_identity.aks_wi.id
   subject             = "system:serviceaccount:dev:fitbuddy-sa"
 }
-

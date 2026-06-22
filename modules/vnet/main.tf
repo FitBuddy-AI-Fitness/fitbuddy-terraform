@@ -1,50 +1,52 @@
 ﻿# Hub VNet
 resource "azurerm_virtual_network" "hub" {
-  name                = "vnet-hub-002"
+  name                = "vnet-hub-003"
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = [var.hub_vnet_cidr]
+  address_space       = ["10.0.0.0/16"]
   tags                = var.tags
 }
 
+# Hub Subnets
 resource "azurerm_subnet" "appgw" {
   name                 = "snet-appgw"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.hub.name
-  address_prefixes     = [cidrsubnet(var.hub_vnet_cidr, 8, 1)]
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_subnet" "bastion" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.hub.name
-  address_prefixes     = [cidrsubnet(var.hub_vnet_cidr, 8, 2)]
+  address_prefixes     = ["10.0.2.0/24"]
 }
 
 # Spoke VNet
 resource "azurerm_virtual_network" "spoke" {
-  name                = "vnet-spoke-prod-002"
+  name                = "vnet-spoke-prod-003"
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = [var.spoke_vnet_cidr]
+  address_space       = ["10.1.0.0/16"]
   tags                = var.tags
 }
 
+# Spoke Subnets
 resource "azurerm_subnet" "aks" {
   name                 = "snet-aks"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.spoke.name
-  address_prefixes     = [cidrsubnet(var.spoke_vnet_cidr, 8, 1)]
+  address_prefixes     = ["10.1.1.0/24"]
 }
 
-resource "azurerm_subnet" "pe" {
-  name                 = "snet-private-endpoints"
+resource "azurerm_subnet" "private_endpoints" {
+  name                 = "snet-pe"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.spoke.name
-  address_prefixes     = [cidrsubnet(var.spoke_vnet_cidr, 8, 2)]
+  address_prefixes     = ["10.1.2.0/24"]
 }
 
-# VNet Peering
+# VNet Peering: Hub to Spoke
 resource "azurerm_virtual_network_peering" "hub_to_spoke" {
   name                      = "peer-hub-to-spoke"
   resource_group_name       = var.resource_group_name
@@ -54,6 +56,7 @@ resource "azurerm_virtual_network_peering" "hub_to_spoke" {
   allow_forwarded_traffic      = true
 }
 
+# VNet Peering: Spoke to Hub
 resource "azurerm_virtual_network_peering" "spoke_to_hub" {
   name                      = "peer-spoke-to-hub"
   resource_group_name       = var.resource_group_name
@@ -65,7 +68,7 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 
 # Azure Bastion
 resource "azurerm_public_ip" "bastion_pip" {
-  name                = "pip-bastion-002"
+  name                = "pip-bastion-003"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -77,7 +80,6 @@ resource "azurerm_bastion_host" "bastion" {
   name                = "bastion-hub"
   location            = var.location
   resource_group_name = var.resource_group_name
-  sku                 = "Standard"
   tags                = var.tags
 
   ip_configuration {
@@ -87,7 +89,7 @@ resource "azurerm_bastion_host" "bastion" {
   }
 }
 
-# Application Gateway (WAF v2)
+# Application Gateway WAF
 resource "azurerm_public_ip" "appgw_pip" {
   name                = "pip-appgw"
   location            = var.location
@@ -99,14 +101,16 @@ resource "azurerm_public_ip" "appgw_pip" {
 
 resource "azurerm_application_gateway" "appgw" {
   name                = "appgw-waf"
-  location            = var.location
   resource_group_name = var.resource_group_name
+  location            = var.location
   tags                = var.tags
+  
+  firewall_policy_id = azurerm_web_application_firewall_policy.waf.id
 
   sku {
     name     = "WAF_v2"
     tier     = "WAF_v2"
-    capacity = 1
+    capacity = 2
   }
 
   gateway_ip_configuration {
@@ -115,45 +119,47 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-    name = "fe-port"
+    name = "frontend-port"
     port = 80
   }
 
   frontend_ip_configuration {
-    name                 = "fe-ip-config"
+    name                 = "frontend-ip-config"
     public_ip_address_id = azurerm_public_ip.appgw_pip.id
   }
 
   backend_address_pool {
-    name = "be-aks-pool"
+    name = "backend-pool"
   }
 
   backend_http_settings {
-    name                  = "be-http-settings"
+    name                  = "backend-http-settings"
     cookie_based_affinity = "Disabled"
-    path                  = "/"
     port                  = 80
     protocol              = "Http"
     request_timeout       = 60
   }
 
   http_listener {
-    name                           = "listener"
-    frontend_ip_configuration_name = "fe-ip-config"
-    frontend_port_name             = "fe-port"
+    name                           = "http-listener"
+    frontend_ip_configuration_name = "frontend-ip-config"
+    frontend_port_name             = "frontend-port"
     protocol                       = "Http"
   }
 
   request_routing_rule {
-    name                       = "rule1"
+    name                       = "routing-rule"
     rule_type                  = "Basic"
-    http_listener_name         = "listener"
-    backend_address_pool_name  = "be-aks-pool"
-    backend_http_settings_name = "be-http-settings"
+    http_listener_name         = "http-listener"
+    backend_address_pool_name  = "backend-pool"
+    backend_http_settings_name = "backend-http-settings"
     priority                   = 100
   }
 
-  firewall_policy_id = azurerm_web_application_firewall_policy.waf.id
+  ssl_policy {
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20220101"
+  }
 }
 
 # Standalone WAF Policy
@@ -178,4 +184,3 @@ resource "azurerm_web_application_firewall_policy" "waf" {
     }
   }
 }
-
