@@ -42,6 +42,23 @@ jobs:
         run: terraform plan -var-file="prod.tfvars" -no-color
         continue-on-error: false
 
+      - name: Cleanup Orphaned Azure Resources
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          az login --service-principal -u ${{ secrets.ARM_CLIENT_ID }} -p ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
+          az account set -s ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az network application-gateway delete -g Aravind-RG -n appgw-waf --no-wait || true
+          az network application-gateway delete -g Aravind-RG -n appgw-belgium --no-wait || true
+          az network public-ip delete -g Aravind-RG -n pip-appgw --no-wait || true
+          az network public-ip delete -g Aravind-RG -n pip-appgw-belgium --no-wait || true
+
+      - name: Cleanup Orphaned Terraform State
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          terraform state rm module.vnet.azurerm_application_gateway.appgw || true
+          terraform state rm module.vnet.azurerm_public_ip.appgw_pip || true
+          terraform state rm module.vnet.azurerm_public_ip.appgw || true
+
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -var-file="prod.tfvars"

@@ -91,7 +91,7 @@ resource "azurerm_bastion_host" "bastion" {
 
 # Public IP for App Gateway
 resource "azurerm_public_ip" "appgw_pip" {
-  name                = "pip-appgw-belgium"
+  name                = "pip-appgw-v2"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -101,7 +101,7 @@ resource "azurerm_public_ip" "appgw_pip" {
 
 # Application Gateway WAF v2
 resource "azurerm_application_gateway" "appgw" {
-  name                = "appgw-belgium"
+  name                = "appgw-belgium-v2"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
