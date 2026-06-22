@@ -18,3 +18,4 @@ output "estimated_monthly_cost" {
   description = "Cloud cost analysis (Estimated)"
   value       = "Estimated Monthly Cost: AKS Standard ($0.10/hr/node * 3 nodes = ~/mo) + CosmosDB Serverless (~$50/mo) + App Gateway WAF v2 (~$225/mo) = ~$491/month"
 }
+

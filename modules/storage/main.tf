@@ -5,7 +5,8 @@
   account_tier             = "Standard"
   account_replication_type = "LRS"
   tags                     = var.tags
-  public_network_access_enabled = false
+  # Public access enabled to allow pipeline creation, but Private Endpoint will handle internal AKS traffic securely
+  public_network_access_enabled = true
 }
 
 resource "azurerm_storage_container" "blob" {

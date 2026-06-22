@@ -3,7 +3,7 @@
   location            = var.location
   resource_group_name = var.resource_group_name
   offer_type          = "Standard"
-  kind                = "GlobalDocumentDB"
+  kind                = "MongoDB"
   tags                = var.tags
 
   capacity {
@@ -22,7 +22,7 @@
   public_network_access_enabled = false
 }
 
-resource "azurerm_cosmosdb_sql_database" "sqldb" {
+resource "azurerm_cosmosdb_mongo_database" "mongodb" {
   name                = "fitbuddy-db"
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.db.name
@@ -41,7 +41,7 @@ resource "azurerm_private_endpoint" "pe" {
     name                           = "psc-cosmosdb"
     private_connection_resource_id = azurerm_cosmosdb_account.db.id
     is_manual_connection           = false
-    subresource_names              = ["Sql"]
+    subresource_names              = ["MongoDB"]
   }
 
   private_dns_zone_group {
@@ -51,7 +51,7 @@ resource "azurerm_private_endpoint" "pe" {
 }
 
 resource "azurerm_private_dns_zone" "cosmos" {
-  name                = "privatelink.documents.azure.com"
+  name                = "privatelink.mongo.cosmos.azure.com"
   resource_group_name = var.resource_group_name
 }
 
