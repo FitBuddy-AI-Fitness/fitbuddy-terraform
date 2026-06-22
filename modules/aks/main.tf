@@ -8,22 +8,22 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
 
 # AKS Cluster (Standard Tier)
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-02"
+  name                = "aks-cluster-03"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix          = "fitbuddy-aks"
+  dns_prefix          = "fitbuddy-aks-03"
   sku_tier            = "Standard"
   tags                = var.tags
 
   default_node_pool {
     name                = "default"
-    vm_size             = "Standard_DS2_v2"
+    vm_size             = "Standard_B2s"
     vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
     enable_auto_scaling = true
     node_count          = 1
     min_count           = 1
-    max_count           = 3
+    max_count           = 2
   }
 
   identity {
