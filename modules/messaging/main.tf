@@ -1,5 +1,5 @@
 ﻿resource "azurerm_servicebus_namespace" "sb" {
-  name                = "sb-fitbuddy-prod-001"
+  name                = "sb-fitbuddy-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
@@ -18,3 +18,4 @@ resource "azurerm_servicebus_queue" "diet_queue" {
   name         = "diet-events"
   namespace_id = azurerm_servicebus_namespace.sb.id
 }
+

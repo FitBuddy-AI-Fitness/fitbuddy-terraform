@@ -1,6 +1,6 @@
 ﻿# Hub VNet
 resource "azurerm_virtual_network" "hub" {
-  name                = "vnet-hub-003"
+  name                = "vnet-hub-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
@@ -24,7 +24,7 @@ resource "azurerm_subnet" "bastion" {
 
 # Spoke VNet
 resource "azurerm_virtual_network" "spoke" {
-  name                = "vnet-spoke-prod-003"
+  name                = "vnet-spoke-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = ["10.1.0.0/16"]
@@ -68,7 +68,7 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 
 # Azure Bastion
 resource "azurerm_public_ip" "bastion_pip" {
-  name                = "pip-bastion-003"
+  name                = "pip-bastion-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -164,7 +164,7 @@ resource "azurerm_application_gateway" "appgw" {
 
 # Standalone WAF Policy
 resource "azurerm_web_application_firewall_policy" "waf" {
-  name                = "waf-policy-fitbuddy"
+  name                = "waf-policy-belgium"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
@@ -184,3 +184,4 @@ resource "azurerm_web_application_firewall_policy" "waf" {
     }
   }
 }
+

@@ -1,5 +1,5 @@
 ﻿resource "azurerm_cosmosdb_account" "db" {
-  name                = "cosmos-fitbuddy-production"
+  name                = "cosmos-fitbuddy-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
   offer_type          = "Standard"
@@ -61,3 +61,4 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.cosmos.name
   virtual_network_id    = var.vnet_id
 }
+
