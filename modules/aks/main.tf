@@ -31,10 +31,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
-  oms_agent {
-    log_analytics_workspace_id = null
-  }
-
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
 
