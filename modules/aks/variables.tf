@@ -4,3 +4,4 @@ variable "vnet_subnet_id" {}
 variable "node_count" {}
 variable "tags" { type = map(string) }
 variable "acr_id" {}
+variable "log_analytics_workspace_id" {}

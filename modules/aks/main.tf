@@ -11,9 +11,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-cluster-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix          = "fitbuddy-aks-belgium"
-  sku_tier            = "Free"
-  tags                = var.tags
+  dns_prefix              = "fitbuddy-aks-belgium"
+  sku_tier                = "Free"
+  tags                    = var.tags
+  private_cluster_enabled = true
 
   default_node_pool {
     name                = "default"
@@ -38,6 +39,24 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
   }
+
+  oms_agent {
+    log_analytics_workspace_id = var.log_analytics_workspace_id
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  name                  = "user"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_D2ads_v6"
+  vnet_subnet_id        = var.vnet_subnet_id
+  zones                 = ["2", "3"]
+  enable_auto_scaling   = true
+  node_count            = 1
+  min_count             = 1
+  max_count             = 2
+  node_taints           = ["workload=app:NoSchedule"]
+  tags                  = var.tags
 }
 
 # Removed ACR Pull Role Assignment due to ABAC Condition limitations.

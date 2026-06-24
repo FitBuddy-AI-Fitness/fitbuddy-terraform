@@ -23,9 +23,10 @@ module "aks" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.location
   vnet_subnet_id      = module.vnet.aks_subnet_id
-  node_count          = var.aks_node_count
-  acr_id              = module.storage.acr_id
-  tags                = local.common_tags
+  node_count                 = var.aks_node_count
+  acr_id                     = module.storage.acr_id
+  log_analytics_workspace_id = module.monitoring.log_analytics_workspace_id
+  tags                       = local.common_tags
 }
 
 module "database" {
@@ -71,3 +72,9 @@ module "ai" {
   tags                       = local.common_tags
 }
 
+module "monitoring" {
+  source              = "./modules/monitoring"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = var.location
+  tags                = local.common_tags
+}

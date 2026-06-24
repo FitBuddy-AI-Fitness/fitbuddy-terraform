@@ -1,11 +1,11 @@
-﻿resource "azurerm_storage_account" "sa" {
+resource "azurerm_storage_account" "sa" {
   name                     = "safitbuddyprod"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   tags                     = var.tags
-  public_network_access_enabled = true
+  public_network_access_enabled = false
 }
 
 resource "azurerm_private_endpoint" "pe_blob" {
