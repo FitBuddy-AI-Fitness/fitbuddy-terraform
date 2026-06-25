@@ -1,7 +1,7 @@
-﻿data "azurerm_client_config" "current" {}
+data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-fitbuddy-prod-001"
+  name                        = "kv-fitbuddy-prod-002"
   location                    = var.location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true

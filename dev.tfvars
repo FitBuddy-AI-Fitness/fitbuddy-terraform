@@ -1,5 +1,5 @@
-﻿resource_group_name = "Aravind-RG"
-location            = "canadaeast"
+resource_group_name = "Aravind-RG"
+location            = "eastus2"
 environment         = "dev"
 owner               = "Aravind"
 
