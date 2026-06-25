@@ -7,7 +7,7 @@ resource "random_string" "suffix" {
 # Azure Cognitive Services (AI Foundry / OpenAI)
 resource "azurerm_cognitive_account" "openai" {
   name                  = "cog-fitbuddy-v2-${random_string.suffix.result}"
-  location              = "westeurope"
+  location              = var.location
   resource_group_name   = var.resource_group_name
   kind                  = "OpenAI"
   sku_name              = "S0"
@@ -52,7 +52,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "openai_vnet_link" {
 resource "azurerm_search_service" "search" {
   name                = "srch-fitbuddy-v2-${random_string.suffix.result}"
   resource_group_name = var.resource_group_name
-  location            = "westeurope"
+  location            = var.location
   sku                 = "standard"
   tags                = var.tags
   public_network_access_enabled = false
