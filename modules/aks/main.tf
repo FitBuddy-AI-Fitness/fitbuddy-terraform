@@ -21,7 +21,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vm_size             = "Standard_D2s_v3"
     vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
-    zones               = ["2", "3"]
     enable_auto_scaling = true
     node_count          = 1
     min_count           = 1
@@ -50,7 +49,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   vm_size               = "Standard_D2s_v3"
   vnet_subnet_id        = var.vnet_subnet_id
-  zones                 = ["2", "3"]
   enable_auto_scaling   = true
   node_count            = 1
   min_count             = 1
