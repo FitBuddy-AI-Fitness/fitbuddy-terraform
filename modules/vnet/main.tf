@@ -29,7 +29,45 @@ resource "azurerm_subnet" "management" {
   address_prefixes     = ["10.0.3.0/24"]
 }
 
-# Jumpbox VM temporarily removed for debugging
+resource "random_password" "jumpbox_password" {
+  length  = 16
+  special = true
+}
+
+resource "azurerm_network_interface" "jumpbox_nic" {
+  name                = "nic-jumpbox"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.management.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "jumpbox" {
+  name                            = "vm-jumpbox"
+  resource_group_name             = var.resource_group_name
+  location                        = var.location
+  size                            = "Standard_D2ads_v6"
+  admin_username                  = "adminuser"
+  admin_password                  = random_password.jumpbox_password.result
+  disable_password_authentication = false
+  network_interface_ids           = [azurerm_network_interface.jumpbox_nic.id]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+}
 
 # Spoke VNet
 resource "azurerm_virtual_network" "spoke" {
