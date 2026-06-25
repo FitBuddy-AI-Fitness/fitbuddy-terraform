@@ -12,7 +12,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix              = "fitbuddy-aks-eus2"
-  sku_tier                = "Free"
   tags                    = var.tags
   private_cluster_enabled = false
 
@@ -22,7 +21,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
-    node_count          = 1
     min_count           = 1
     max_count           = 2
   }
@@ -50,7 +48,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   vm_size               = "Standard_D2s_v3"
   vnet_subnet_id        = var.vnet_subnet_id
   auto_scaling_enabled  = true
-  node_count            = 1
   min_count             = 1
   max_count             = 2
   node_taints           = ["workload=app:NoSchedule"]
