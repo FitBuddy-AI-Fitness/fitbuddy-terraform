@@ -18,6 +18,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   default_node_pool {
     name                = "default"
     vm_size             = "Standard_D2s_v3"
+    vnet_subnet_id      = var.vnet_subnet_id
     type                = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
     min_count           = 1
@@ -34,8 +35,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
-    service_cidr      = "11.0.0.0/16"
-    dns_service_ip    = "11.0.0.10"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
   }
 
   oms_agent {
@@ -47,6 +48,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   name                  = "user"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   vm_size               = "Standard_D2s_v3"
+  vnet_subnet_id        = var.vnet_subnet_id
   auto_scaling_enabled  = true
   min_count             = 1
   max_count             = 2
