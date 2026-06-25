@@ -1,5 +1,5 @@
 resource "azurerm_log_analytics_workspace" "law" {
-  name                = "law-fitbuddy-belgium"
+  name                = "law-fitbuddy-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018"
@@ -8,14 +8,14 @@ resource "azurerm_log_analytics_workspace" "law" {
 }
 
 resource "azurerm_monitor_workspace" "prom" { 
-  name                = "prom-fitbuddy-belgium"
+  name                = "prom-fitbuddy-eus2"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 }
 
 resource "azurerm_dashboard_grafana" "grafana" {
-  name                              = "grafana-fitbuddy-bel"
+  name                              = "grafana-fitbuddy-eus2"
   resource_group_name               = var.resource_group_name
   location                          = var.location
   api_key_enabled                   = true

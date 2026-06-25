@@ -8,7 +8,7 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
 
 # AKS Cluster
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-belgium"
+  name                = "aks-cluster-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix              = "fitbuddy-aks-eus2"
@@ -35,8 +35,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
-    service_cidr      = "10.2.0.0/16"
-    dns_service_ip    = "10.2.0.10"
+    service_cidr      = "11.0.0.0/16"
+    dns_service_ip    = "11.0.0.10"
   }
 
   oms_agent {

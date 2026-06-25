@@ -1,6 +1,6 @@
 # Hub VNet
 resource "azurerm_virtual_network" "hub" {
-  name                = "vnet-hub-belgium"
+  name                = "vnet-hub-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
@@ -71,7 +71,7 @@ resource "azurerm_linux_virtual_machine" "jumpbox" {
 
 # Spoke VNet
 resource "azurerm_virtual_network" "spoke" {
-  name                = "vnet-spoke-belgium"
+  name                = "vnet-spoke-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = ["10.1.0.0/16"]
@@ -115,7 +115,7 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 
 # Azure Bastion
 resource "azurerm_public_ip" "bastion_pip" {
-  name                = "pip-bastion-belgium"
+  name                = "pip-bastion-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -148,7 +148,7 @@ resource "azurerm_public_ip" "appgw_pip" {
 
 # Application Gateway WAF v2
 resource "azurerm_application_gateway" "appgw" {
-  name                = "appgw-belgium-v2"
+  name                = "appgw-eus2-v2"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
@@ -212,7 +212,7 @@ resource "azurerm_application_gateway" "appgw" {
 
 # Standalone WAF Policy
 resource "azurerm_web_application_firewall_policy" "waf" {
-  name                = "waf-policy-belgium"
+  name                = "waf-policy-eus2"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags

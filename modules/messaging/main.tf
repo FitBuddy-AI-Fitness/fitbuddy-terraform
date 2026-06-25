@@ -1,5 +1,5 @@
-﻿resource "azurerm_servicebus_namespace" "sb" {
-  name                = "sb-fitbuddy-belgium"
+resource "azurerm_servicebus_namespace" "sb" {
+  name                = "sb-fitbuddy-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"

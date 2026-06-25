@@ -48,9 +48,9 @@ jobs:
           az login --service-principal -u ${{ secrets.ARM_CLIENT_ID }} -p ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
           az account set -s ${{ secrets.ARM_SUBSCRIPTION_ID }}
           az network application-gateway delete -g Aravind-RG -n appgw-waf --no-wait || true
-          az network application-gateway delete -g Aravind-RG -n appgw-belgium --no-wait || true
+          az network application-gateway delete -g Aravind-RG -n appgw-eus2-v2 --no-wait || true
           az network public-ip delete -g Aravind-RG -n pip-appgw --no-wait || true
-          az network public-ip delete -g Aravind-RG -n pip-appgw-belgium --no-wait || true
+          az network public-ip delete -g Aravind-RG -n pip-appgw-v2 --no-wait || true
 
       - name: Cleanup Orphaned Terraform State
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
