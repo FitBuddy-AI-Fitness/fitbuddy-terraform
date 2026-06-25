@@ -6,65 +6,24 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
   tags                = var.tags
 }
 
-# AKS Cluster
+# AKS Cluster (Bare Minimum for Debugging)
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-cluster-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix              = "fitbuddy-aks-eus2"
-  tags                    = var.tags
-  private_cluster_enabled = false
+  dns_prefix          = "fitbuddy-aks-eus2"
+  tags                = var.tags
 
   default_node_pool {
-    name                = "default"
-    vm_size             = "Standard_D2s_v3"
-    vnet_subnet_id      = var.vnet_subnet_id
-    type                = "VirtualMachineScaleSets"
-    auto_scaling_enabled = true
-    min_count           = 1
-    max_count           = 2
+    name       = "default"
+    vm_size    = "Standard_D2s_v3"
+    node_count = 1
   }
 
   identity {
     type = "SystemAssigned"
   }
-
-  oidc_issuer_enabled       = true
-  workload_identity_enabled = true
-
-  network_profile {
-    network_plugin    = "azure"
-    load_balancer_sku = "standard"
-    service_cidr      = "172.16.0.0/16" 
-    dns_service_ip    = "172.16.0.10"
-  }
-
-  oms_agent {
-    log_analytics_workspace_id = var.log_analytics_workspace_id
-  }
 }
 
 # User node pool temporarily removed for debugging
-
-# Removed ACR Pull Role Assignment due to ABAC Condition limitations.
-# The user will attach ACR manually via Azure CLI later if needed.
-
-# Federated Identity Credential for Production Namespace
-resource "azurerm_federated_identity_credential" "fic_prod" {
-  name                = "fic-fitbuddy-prod"
-  resource_group_name = var.resource_group_name
-  audience            = ["api://AzureADTokenExchange"]
-  issuer              = azurerm_kubernetes_cluster.aks.oidc_issuer_url
-  parent_id           = azurerm_user_assigned_identity.aks_wi.id
-  subject             = "system:serviceaccount:production:fitbuddy-sa"
-}
-
-# Federated Identity Credential for Dev Namespace
-resource "azurerm_federated_identity_credential" "fic_dev" {
-  name                = "fic-fitbuddy-dev"
-  resource_group_name = var.resource_group_name
-  audience            = ["api://AzureADTokenExchange"]
-  issuer              = azurerm_kubernetes_cluster.aks.oidc_issuer_url
-  parent_id           = azurerm_user_assigned_identity.aks_wi.id
-  subject             = "system:serviceaccount:dev:fitbuddy-sa"
-}
+# Federated identity credentials temporarily removed for debugging
