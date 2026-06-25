@@ -15,7 +15,7 @@ resource "azurerm_monitor_workspace" "prom" {
 }
 
 resource "azurerm_dashboard_grafana" "grafana" {
-  name                              = "grafana-fitbuddy-belgium"
+  name                              = "grafana-fitbuddy-bel"
   resource_group_name               = var.resource_group_name
   location                          = var.location
   api_key_enabled                   = true
