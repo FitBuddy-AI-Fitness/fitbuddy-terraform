@@ -44,17 +44,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "user" {
-  name                  = "user"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_D2s_v3"
-  vnet_subnet_id        = var.vnet_subnet_id
-  auto_scaling_enabled  = true
-  min_count             = 1
-  max_count             = 2
-  node_taints           = ["workload=app:NoSchedule"]
-  tags                  = var.tags
-}
+# User node pool temporarily removed for debugging
 
 # Removed ACR Pull Role Assignment due to ABAC Condition limitations.
 # The user will attach ACR manually via Azure CLI later if needed.
