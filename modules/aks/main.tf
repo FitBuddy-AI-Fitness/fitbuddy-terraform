@@ -17,8 +17,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name                = "default"
-    vm_size             = "Standard_D2ds_v7"
-    vnet_subnet_id      = var.vnet_subnet_id
+    vm_size             = "Standard_D2ads_v6"
     type                = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
     min_count           = 1
@@ -45,8 +44,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 resource "azurerm_kubernetes_cluster_node_pool" "user" {
   name                  = "user"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_D2ds_v7"
-  vnet_subnet_id        = var.vnet_subnet_id
+  vm_size               = "Standard_D2ads_v6"
   auto_scaling_enabled  = true
   min_count             = 1
   max_count             = 2
