@@ -50,7 +50,7 @@ resource "azurerm_linux_virtual_machine" "jumpbox" {
   name                            = "vm-jumpbox"
   resource_group_name             = var.resource_group_name
   location                        = var.location
-  size                            = "Standard_D2s_v3"
+  size                            = "Standard_D2ads_v6"
   admin_username                  = "adminuser"
   admin_password                  = random_password.jumpbox_password.result
   disable_password_authentication = false
@@ -64,7 +64,7 @@ resource "azurerm_linux_virtual_machine" "jumpbox" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }
