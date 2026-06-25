@@ -11,10 +11,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-cluster-belgium"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix              = "fitbuddy-aks-belgium"
+  dns_prefix              = "fitbuddy-aks-eus2"
   sku_tier                = "Free"
   tags                    = var.tags
-  private_cluster_enabled = true
+  private_cluster_enabled = false
 
   default_node_pool {
     name                = "default"
@@ -35,7 +35,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   workload_identity_enabled = true
 
   network_profile {
-    network_plugin    = "azure"
+    network_plugin    = "kubenet"
     load_balancer_sku = "standard"
   }
 
