@@ -84,4 +84,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./
-        run: terraform apply tfplan
+        env:
+          TF_LOG: DEBUG
+        run: terraform apply -auto-approve tfplan
