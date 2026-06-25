@@ -45,7 +45,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         working-directory: ./
-        run: terraform plan -out=tfplan
+        run: terraform plan -var-file="dev.tfvars" -out=tfplan
 
       - name: Upload Plan Artifact
         uses: actions/upload-artifact@v4
