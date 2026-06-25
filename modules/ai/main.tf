@@ -1,5 +1,5 @@
 resource "random_string" "suffix" {
-  length  = 6
+  length  = 8
   special = false
   upper   = false
 }
@@ -52,7 +52,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "openai_vnet_link" {
 resource "azurerm_search_service" "search" {
   name                = "srch-fitbuddy-v2-${random_string.suffix.result}"
   resource_group_name = var.resource_group_name
-  location            = var.location
+  location            = "eastus"
   sku                 = "standard"
   tags                = var.tags
   public_network_access_enabled = false
