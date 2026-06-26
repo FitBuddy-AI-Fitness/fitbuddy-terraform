@@ -16,13 +16,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
   private_cluster_enabled = false
 
   default_node_pool {
-    name                = "default"
-    vm_size             = "Standard_D2ads_v6"
-    vnet_subnet_id      = var.vnet_subnet_id
-    type                = "VirtualMachineScaleSets"
+    name                 = "agentpool"
+    vm_size              = "Standard_D2ads_v6"
+    vnet_subnet_id       = var.vnet_subnet_id
+    type                 = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
-    min_count           = 1
-    max_count           = 2
+    min_count            = 1
+    max_count            = 2
+    zones                = ["1", "2"]
+    max_pods             = 110
   }
 
   identity {
@@ -52,6 +54,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   auto_scaling_enabled  = true
   min_count             = 1
   max_count             = 2
+  zones                 = ["1", "2"]
+  max_pods              = 30
   node_taints           = ["workload=app:NoSchedule"]
   tags                  = var.tags
 }
