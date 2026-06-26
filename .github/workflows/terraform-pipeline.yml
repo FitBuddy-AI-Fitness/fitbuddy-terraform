@@ -7,6 +7,7 @@ on:
       - '**/*.tfvars'
     branches:
       - feature/architecture-fixes
+      - main
 
 jobs:
   plan:
