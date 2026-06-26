@@ -1,7 +1,7 @@
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "kv_suffix" {
-  length  = 6
+  length  = 7
   special = false
   upper   = false
 }

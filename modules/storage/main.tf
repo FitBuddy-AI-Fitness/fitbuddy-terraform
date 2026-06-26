@@ -1,5 +1,5 @@
 resource "random_string" "sa_suffix" {
-  length  = 6
+  length  = 7
   special = false
   upper   = false
 }
