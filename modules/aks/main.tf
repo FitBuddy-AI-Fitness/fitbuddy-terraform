@@ -8,7 +8,7 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
 
 # AKS Cluster
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-eus2"
+  name                = "aks-fitbuddy-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix              = "fitbuddy-aks-eus2"
