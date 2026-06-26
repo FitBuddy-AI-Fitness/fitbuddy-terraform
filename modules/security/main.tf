@@ -1,7 +1,13 @@
-﻿data "azurerm_client_config" "current" {}
+data "azurerm_client_config" "current" {}
+
+resource "random_string" "kv_suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-fitbuddy-prod-001"
+  name                        = "kv-fitbuddy-${random_string.kv_suffix.result}"
   location                    = var.location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true

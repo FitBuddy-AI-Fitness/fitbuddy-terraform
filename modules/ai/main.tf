@@ -1,19 +1,19 @@
-﻿resource "random_string" "suffix" {
-  length  = 6
+resource "random_string" "suffix" {
+  length  = 9
   special = false
   upper   = false
 }
 
 # Azure Cognitive Services (AI Foundry / OpenAI)
 resource "azurerm_cognitive_account" "openai" {
-  name                  = "cog-fitbuddy-be-${random_string.suffix.result}"
-  location              = "westeurope"
+  name                  = "cog-fitbuddy-v2-${random_string.suffix.result}"
+  location              = var.location
   resource_group_name   = var.resource_group_name
   kind                  = "OpenAI"
   sku_name              = "S0"
   tags                  = var.tags
   public_network_access_enabled = false
-  custom_subdomain_name = "cog-fitbuddy-be-${random_string.suffix.result}"
+  custom_subdomain_name = "cog-fitbuddy-v2-${random_string.suffix.result}"
 }
 
 resource "azurerm_private_endpoint" "pe_openai" {
@@ -50,9 +50,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "openai_vnet_link" {
 
 # Azure AI Search (Cognitive Search)
 resource "azurerm_search_service" "search" {
-  name                = "srch-fitbuddy-be-${random_string.suffix.result}"
+  name                = "srch-fitbuddy-v2-${random_string.suffix.result}"
   resource_group_name = var.resource_group_name
-  location            = "westeurope"
+  location            = "eastus"
   sku                 = "standard"
   tags                = var.tags
   public_network_access_enabled = false

@@ -8,23 +8,23 @@ resource "azurerm_user_assigned_identity" "aks_wi" {
 
 # AKS Cluster
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-cluster-belgium"
+  name                = "aks-fitbuddy-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
-  dns_prefix          = "fitbuddy-aks-belgium"
-  sku_tier            = "Free"
-  tags                = var.tags
+  dns_prefix              = "fitbuddy-aks-eus2"
+  tags                    = var.tags
+  private_cluster_enabled = false
 
   default_node_pool {
-    name                = "default"
-    vm_size             = "Standard_D2ads_v6"
-    vnet_subnet_id      = var.vnet_subnet_id
-    type                = "VirtualMachineScaleSets"
-    zones               = ["2", "3"]
-    enable_auto_scaling = true
-    node_count          = 1
-    min_count           = 1
-    max_count           = 2
+    name                 = "agentpool"
+    vm_size              = "Standard_D2ads_v6"
+    vnet_subnet_id       = var.vnet_subnet_id
+    type                 = "VirtualMachineScaleSets"
+    auto_scaling_enabled = true
+    min_count            = 1
+    max_count            = 2
+    zones                = ["1", "2"]
+    max_pods             = 110
   }
 
   identity {
@@ -37,11 +37,35 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
+  }
+
+  oms_agent {
+    log_analytics_workspace_id = var.log_analytics_workspace_id
   }
 }
 
-# Removed ACR Pull Role Assignment due to ABAC Condition limitations.
-# The user will attach ACR manually via Azure CLI later if needed.
+resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  name                  = "user"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_D2ads_v6"
+  vnet_subnet_id        = var.vnet_subnet_id
+  auto_scaling_enabled  = true
+  min_count             = 1
+  max_count             = 2
+  zones                 = ["1", "2"]
+  max_pods              = 30
+  node_taints           = ["workload=app:NoSchedule"]
+  tags                  = var.tags
+}
+
+# ACR Pull Role Assignment
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = var.acr_id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+}
 
 # Federated Identity Credential for Production Namespace
 resource "azurerm_federated_identity_credential" "fic_prod" {

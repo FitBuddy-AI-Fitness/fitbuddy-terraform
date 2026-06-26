@@ -1,0 +1,87 @@
+name: Terraform Infrastructure Pipeline
+
+on:
+  push:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+    branches:
+      - feature/architecture-fixes
+
+jobs:
+  plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Debug Secrets
+        run: |
+          echo "Checking if secrets are populated..."
+          if [ -z "$ARM_CLIENT_ID" ]; then echo "Client ID is empty!"; else echo "Client ID is set."; fi
+          if [ -z "$ARM_CLIENT_SECRET" ]; then echo "Client Secret is empty!"; else echo "Client Secret is set."; fi
+          if [ -z "$ARM_SUBSCRIPTION_ID" ]; then echo "Subscription ID is empty!"; else echo "Subscription ID is set."; fi
+          if [ -z "$ARM_TENANT_ID" ]; then echo "Tenant ID is empty!"; else echo "Tenant ID is set."; fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        working-directory: ./
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ./
+        run: terraform plan -var-file="dev.tfvars" -out=tfplan
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ./tfplan
+
+  apply:
+    name: Terraform Apply
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: production # This triggers the manual approval gate in GitHub Settings -> Environments
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ./
+
+      - name: Terraform Init
+        working-directory: ./
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./
+        run: terraform apply -auto-approve tfplan

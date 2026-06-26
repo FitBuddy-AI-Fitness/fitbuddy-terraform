@@ -1,8 +1,8 @@
-﻿terraform {
+terraform {
   backend "azurerm" {
-    resource_group_name  = "Aravind-RG"
-    storage_account_name = "fitbuddytfstate"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
+    resource_group_name  = "Aravind-RG-test"   
+    storage_account_name = "fitbuddytf"  
+    container_name       = "tfstate" 
+    key                  = "terraform.tfstate"  
   }
 }

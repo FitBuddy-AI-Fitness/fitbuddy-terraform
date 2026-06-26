@@ -1,5 +1,5 @@
-﻿resource "azurerm_cosmosdb_account" "db" {
-  name                = "cosmos-fitbuddy-belgium"
+resource "azurerm_cosmosdb_account" "db" {
+  name                = "cosmos-fitbuddy-eus2"
   location            = var.location
   resource_group_name = var.resource_group_name
   offer_type          = "Standard"
@@ -13,6 +13,11 @@
   geo_location {
     location          = var.location
     failover_priority = 0
+  }
+
+  geo_location {
+    location          = "centralus"
+    failover_priority = 1
   }
 
   consistency_policy {
