@@ -56,8 +56,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   tags                  = var.tags
 }
 
-# Removed ACR Pull Role Assignment due to ABAC Condition limitations.
-# The user will attach ACR manually via Azure CLI later if needed.
+# ACR Pull Role Assignment
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = var.acr_id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+}
 
 # Federated Identity Credential for Production Namespace
 resource "azurerm_federated_identity_credential" "fic_prod" {
