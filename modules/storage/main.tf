@@ -1,5 +1,11 @@
+resource "random_string" "sa_suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 resource "azurerm_storage_account" "sa" {
-  name                     = "safitbuddyprod"
+  name                     = "safitbuddy${random_string.sa_suffix.result}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
