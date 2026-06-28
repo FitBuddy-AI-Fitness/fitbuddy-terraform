@@ -5,7 +5,7 @@ resource "azurerm_servicebus_namespace" "sb" {
   sku                 = "Standard"
   tags                = var.tags
   
-  # The user explicitly requested to make Service Bus PUBLIC
+ 
   public_network_access_enabled = true
 }
 
